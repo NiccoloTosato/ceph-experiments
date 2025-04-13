@@ -1,3 +1,14 @@
+# 27/10/2024
+
+Waiting for xfs, btrfs, ext4 results. 
+The delay is due: the maximum number of job that fio can run and the fact that all the files are created in advance and i didn't manage to create file on open (0 R/W bandwidth**. 
+So I renamed all the jobs with the same name, shouldt' be any side effect. 
+
+**Usefull material to know when IO scheduler can merge requests**:
+
+https://serverfault.com/questions/849958/why-is-io-scheduler-not-merging-requests
+
+
 # Experiments Logbook
 
 ## 15/10/2024 - Network setup and test
@@ -60,6 +71,7 @@ Conclusion: use the low latency profile and avoid setting frequency from OS, thi
 ### HDD
 
 Query device status, only few starts reported below:
+
 ```bash
 $ smartctl -x /dev/sda
 === START OF INFORMATION SECTION ===
@@ -108,6 +120,7 @@ get-feature:0x02 (Power Management), Current value:00000000
 ## 21/10/2024 Cobbler setup polishing and FIO results
 
 Changed cobbler kickstart, to clear the disk from the old partitions, on `ceph.ks`:
+
 ```bash
 # Generated using Blivet version 3.9.1
 clearpart --drives=nvme0n1 --all
@@ -143,17 +156,6 @@ $ fio raw-spin.fio --cgroup=blkio
 ### Profile optimization
 
 All machines have been setted up to work with a performance profile and low-latency workload
-
-
-# 27/10/2024
-
-Waiting for xfs, btrfs, ext4 results. 
-The delay is due: the maximum number of job that fio can run and the fact that all the files are created in advance and i didn't manage to create file on open (0 R/W bandwidth**. 
-So I renamed all the jobs with the same name, shouldt' be any side effect. 
-
-**Usefull material to know when IO scheduler can merge requests**:
-
-https://serverfault.com/questions/849958/why-is-io-scheduler-not-merging-requests
 
 
 # 28/10/2024
@@ -213,7 +215,9 @@ Warm up and check the results:
 
 # Single node result
 
-All the result concerning only a single machine are available in XXXXXXXX.
+All the result concerning only a single machine are available [here](https://github.com/NiccoloTosato/ceph-experiments/tree/main/single-node).
+
+Results and plot are reported in a [notebook](https://github.com/NiccoloTosato/ceph-experiments/blob/main/single-node/plot.ipynb)
 
 # 6/11/2024
 
@@ -266,7 +270,7 @@ Perform all the experiments using the cartesian product between:
 
 ### Offline cores:
 
-Script used for the tests: XXXXXXXXX
+Script used for the tests: [here](https://github.com/NiccoloTosato/ceph-experiments/tree/main/script/cpu).
 
 Key idea:
 
@@ -281,13 +285,13 @@ Key idea:
 8
 ```
 
-Linux kernel docs: XXXXXXXXXXXXXXXX
+Linux kernel docs: [CPU hotplug](https://docs.kernel.org/core-api/cpu_hotplug.html)
 
 **Warning**: In case of multisocket Intel use round-robin enumeration by default. Offlining sequential core mean reduce the number of core on both sockets. So first check the core id using `lscpu`. Moreover in case of NUMA architectures, you want offline cores in a round robin fashion respect the numa regions. 
 
 ### Offline memory:
 
-Scripts used for the tests: XXXXXXXX
+Scripts used for the tests: [here](https://github.com/NiccoloTosato/ceph-experiments/tree/main/script/ram)
 
 Key idea:
 ```
@@ -323,7 +327,7 @@ Total online memory:    31.9G
 Total offline memory:      0B
 ```
 
-Linux kernel docs: XXXXXXXX
+Linux kernel docs: [Memory Hot(Un)Plug](https://docs.kernel.org/admin-guide/mm/memory-hotplug.html)
 
 **Warning**: page locked memory cannot be put offline, so if the kernel allocate some blocks is not possible to migrate page and offline memory. An idea is to boot the machine with less memory and increase it during the tests. 
 
@@ -332,29 +336,42 @@ Linux kernel docs: XXXXXXXX
 Given the maximum ram and cpu count:
 - range(100,275+25,25)
 
-## Practical action:
 
-3. rebuild ceph cluster, trivial, but long
-4. set infiniband cluster network and public network,trivial
-5. rebuild all pools
-6. move podman process inside a cgroup, not trivial, unknown:
-  - podman inspect --format "{{.State.Pid}}" 530feb65b6b6
-  - move pid inside a cgroup
-  - exec into container and test dd
-  - piangere
-  -  podman update 294c9b268396 --device-write-bps /dev/sdb:1mb
-7. reduce ram, more or less known
-8. reduce cpu, trivial
+### Use blkio
 
-# How to change CPU count
+To limit the IO towards the device we will use the cgroup interface. Since all the OSD daemon run with a podman container, we will use podman to apply cgroup limitations.
 
-# How to offline memory
+Official kernel docs: [here](https://www.kernel.org/doc/Documentation/cgroup-v1/blkio-controller.txt)
 
-# How to lauch server client
+We will use `podman update` with the flags:
+```
+   --device-read-bps=path:rate
+       Limit read rate (in bytes per  second)  from  a  device  (e.g.
+       --device-read-bps=/dev/sda:1mb).
 
-# How to deploy ceph
+       On  some  systems, changing the resource limits may not be al‐
+       lowed   for   non-root   users.   For   more   details,    see
+       https://github.com/containers/podman/blob/main/troubleshoot‐
+       ing.md#26-running-containers-with-resource-limits-fails-with-
+       a-permissions-error
 
+       This option is not supported on cgroups V1 rootless systems.
 
+   --device-write-bps=path:rate
+       Limit write rate (in bytes per second) to a device (e.g. --de‐
+       vice-write-bps=/dev/sda:1mb).
 
+       On some systems, changing the resource limits may not  be  al‐
+       lowed    for   non-root   users.   For   more   details,   see
+       https://github.com/containers/podman/blob/main/troubleshoot‐
+       ing.md#26-running-containers-with-resource-limits-fails-with-
+       a-permissions-error
+``**
 
+**idea**: Will this work with NIC ? Moreover, take a look at IOPS limits.
 
+The script used to update all the container can be found [here](https://github.com/NiccoloTosato/ceph-experiments/tree/main/script/blkio).
+
+# Results
+
+The results are reported in this [notebook](https://github.com/NiccoloTosato/ceph-experiments/blob/main/multi-node/scaling.ipynb).
