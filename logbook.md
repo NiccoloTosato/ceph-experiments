@@ -366,7 +366,7 @@ We will use `podman update` with the flags:
        https://github.com/containers/podman/blob/main/troubleshoot‐
        ing.md#26-running-containers-with-resource-limits-fails-with-
        a-permissions-error
-``**
+```
 
 **idea**: Will this work with NIC ? Moreover, take a look at IOPS limits.
 
