@@ -336,7 +336,6 @@ Linux kernel docs: [Memory Hot(Un)Plug](https://docs.kernel.org/admin-guide/mm/m
 Given the maximum ram and cpu count:
 - range(100,275+25,25)
 
-
 ### Use blkio
 
 To limit the IO towards the device we will use the cgroup interface. Since all the OSD daemon run with a podman container, we will use podman to apply cgroup limitations.

@@ -7,3 +7,4 @@
 - `results_inverted`: Same experiment repeated changing the order of the runs
 - `results_30run_50s`: Experiment with 30 samples lasting 50 seconds each.
 - `results_5run_300s`: Experiments with 5 samples lasting 300 seconds each.
+- `scaling.ipynb`: notebook to plot the results.
