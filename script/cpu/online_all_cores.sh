@@ -1,5 +1,14 @@
 #!/bin/bash -e
 
+# SPDX-FileCopyrightText: 2025 Isac Pasianotto <isac.pasianotto@phd.units.it>
+# SPDX-FileCopyrightText: 2025 Isac Pasianotto isac.pasianotto@phd.units.it
+# SPDX-FileCopyrightText: 2025 Niccolo Tosato <niccolo.tosato@phd.units.it>
+# SPDX-FileCopyrightText: 2025 Niccolo Tosato niccolo.tosato@phd.units.it
+# SPDX-FileCopyrightText: 2025 Ruggero Lot <ruggero.lot@areasciencepark.it>
+# SPDX-FileCopyrightText: 2025 opyright=Ruggero Lot ruggero.lot@areasciencepark.it
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 echo "Host: $(hostname)"
 echo "Starting to online all CPU cores, current cores online $(nproc)"
 

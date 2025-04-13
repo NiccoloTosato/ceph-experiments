@@ -1,0 +1,5 @@
+version = 1
+SPDX-PackageName = "ceph-experiment"
+SPDX-PackageSupplier = "Niccolò Tosato <niccolo.tosato@phd.units.it>"
+SPDX-PackageDownloadLocation = "https://github.com/NiccoloTosato/ceph-experiments/"
+annotations = []

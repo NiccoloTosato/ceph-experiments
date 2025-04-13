@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2025 Isac Pasianotto <isac.pasianotto@phd.units.it>
+# SPDX-FileCopyrightText: 2025 Isac Pasianotto isac.pasianotto@phd.units.it
+# SPDX-FileCopyrightText: 2025 Niccolo Tosato <niccolo.tosato@phd.units.it>
+# SPDX-FileCopyrightText: 2025 Niccolo Tosato niccolo.tosato@phd.units.it
+# SPDX-FileCopyrightText: 2025 Ruggero Lot <ruggero.lot@areasciencepark.it>
+# SPDX-FileCopyrightText: 2025 opyright=Ruggero Lot ruggero.lot@areasciencepark.it
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Iterate through all memory blocks
 for memblock in /sys/devices/system/memory/memory*/state; do
     block_name=$(basename "$(dirname "$memblock")")
